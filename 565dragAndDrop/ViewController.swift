@@ -8,7 +8,7 @@
 import Cocoa
 
 class ViewController: NSViewController {
-
+    
     @IBOutlet weak var heightTextField: NSTextField!
     @IBOutlet weak var widthTextField: NSTextField!
     @IBOutlet weak var directoryTextField: NSTextField!
@@ -29,6 +29,8 @@ class ViewController: NSViewController {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
     
+        NotificationCenter.default.addObserver(self, selector: #selector(openFileDialog), name: Notification.Name("OpenClicked"), object: nil)
+        
         myDropView.fileUrlObtained = self.filesDropped
         self.view.addSubview(myDropView)
     }
@@ -44,7 +46,7 @@ class ViewController: NSViewController {
     
     //This was for an earlier version that had a test button. This will be removed in a future commit.
     /*
-     @IBAction func runTestPushed(_ sender: Any) {
+    @IBAction func runTestPushed(_ sender: Any) {
         let hght = heightTextField.intValue
         let wdth = widthTextField.intValue
         let drct = directoryTextField.stringValue
@@ -76,7 +78,7 @@ class ViewController: NSViewController {
         NSLog("doesDir = %d", doesDir)
         
         imgConverter.parseOptions(hght, withWidth: wdth, hasDirectory: doesDir, withDirectory: drct, hasDebugOn: doesDbg, hasInterpolation: doesInt, hasNegative: doesNeg, hasPpmPreview: doesPPM)
-        imgConverter.imageConverter(1, arguments: ["<USE LOCAL FILE WITH PATH HERE>"])
+        imgConverter.imageConverter(1, arguments: ["</USE/LOCAL/PATH/FOR/TESTING.png>"])
     }
     */
     
@@ -109,13 +111,28 @@ class ViewController: NSViewController {
             }
         }
         
+        
         if (drct != "" && !exists) {
             NSLog("Not a valid path")
             let alert = NSAlert()
             alert.messageText = "Invalid path"
-            alert.informativeText = "Invalid path entered. Please check spelling. Using input image directory as output directory."
+            alert.informativeText = "Invalid path entered. Please check spelling. Click continue to use input image directory as output directory."
             alert.alertStyle = .informational
-            alert.runModal()
+            alert.addButton(withTitle: "Continue")
+            alert.addButton(withTitle: "Abort")
+            let response = alert.runModal()
+            
+            switch response {
+            case NSApplication.ModalResponse.alertFirstButtonReturn:
+                print("Continuing")
+            case NSApplication.ModalResponse.alertSecondButtonReturn:
+                print("Aborting")
+                return;
+            default:
+                break
+            }
+        
+        
         }
         
         doesDir = (exists && isDirectory.boolValue)
@@ -143,9 +160,29 @@ class ViewController: NSViewController {
 
     }
     
-    
-    
-    
+    @objc func openFileDialog(){
+        var outUrls = [URL]()
+        
+        let panel = NSOpenPanel()
+
+        // Configure the panel
+        panel.title = "Choose image files"
+        panel.canChooseDirectories = false
+        panel.canChooseFiles = true
+        panel.allowsMultipleSelection = true
+        panel.allowedFileTypes = ["jpg", "png", "jpeg"]
+
+        // Present the panel as a sheet attached to the current window
+        panel.beginSheetModal(for: self.view.window!) { (response) in
+            if response == .OK {
+                for selectedUrl in panel.urls {
+                    print("Selected file: \(selectedUrl.path)")
+                    outUrls.append(selectedUrl)
+                }
+                self.filesDropped(fileUrls: outUrls)
+            }
+        }
+    }
     
     
     override var representedObject: Any? {
