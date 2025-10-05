@@ -116,6 +116,8 @@ CGContextRef CreateARGBBitmapContext (CGImageRef inImage){
         fprintf(stderr, "color space not allocated");
         
     }
+    
+    //bitmapData always winds up having the same memory address as data in the manipulatePixelData. Freeing it up in this function doesn't work. Freeing it up if passed in by reference by manipulatePixelData after it's done being used causes an error.
     bitmapData = malloc(bitmapBytesCount);
     if (bitmapData == NULL){
         NSLog(@"Memory not allocated");
@@ -124,9 +126,9 @@ CGContextRef CreateARGBBitmapContext (CGImageRef inImage){
         return NULL;
     }
     if (debugOutput)
-        NSLog(@"Memory allocated");
+        NSLog(@"Memory allocated %p", bitmapData);
     
-    // Create teh bitmap context. We want pre-multiplied ARGB 8-bits per component.
+    // Create the bitmap context. We want pre-multiplied ARGB 8-bits per component.
     //   Regardless of what the source image format is (CMYK, Grayscale, and so on) it will
     //   it will be converted over to the format specified here in the CGBitmapContextCreate.
     /*context = CGBitmapContextCreate(bitmapData, pixelsWide, pixelsHigh,
@@ -281,6 +283,12 @@ void manipulateImagePixelData(CGImageRef inImage, NSString * outFile){
 
         if (makePPMPreview && ppmData){
             free(ppmData);
+            ppmData = NULL;
+        }
+        
+        if (1 && rgb565Data){
+            free(rgb565Data);
+            rgb565Data = NULL;
         }
 
     }
@@ -295,6 +303,7 @@ void manipulateImagePixelData(CGImageRef inImage, NSString * outFile){
     //Free image data memory for the context
     if (data){
         free(data);
+        data = NULL;
     }
     
     
