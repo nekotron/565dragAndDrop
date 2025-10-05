@@ -277,6 +277,9 @@ void manipulateImagePixelData(CGImageRef inImage, NSString * outFile){
 
     }
     
+    //If we don't clear it before reuse and the next image has transparencies we will wind up with the old image showing behind the new image.
+    CGContextClearRect(cgctx, rect);
+    
     if (debugOutput)
         NSLog(@"CGContextRelease(cgctx);");
     //When finished release the context
