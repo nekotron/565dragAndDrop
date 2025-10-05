@@ -186,6 +186,14 @@ void manipulateImagePixelData(CGImageRef inImage, NSString * outFile){
         NSLog(@"inImage%@",inImage);
         NSLog(@"cgctx pointer %p", &cgctx);
     }
+    
+    //Clearing the context rectangle before usage stops weirdness with
+    // tranparencies in PNGs. Unintialized context has garbage that
+    // shows sometimes instead of black where pngs were transparent.
+    // And it stops a previous image from showing behind an image
+    // if that image has transparency.
+    CGContextClearRect(cgctx, rect);
+    
     //Draw the image to the bitmap context. Once we draw, the memory
     // allocated for the context for rednigng will then contain the
     // raw image data in the specified color space.
@@ -276,9 +284,6 @@ void manipulateImagePixelData(CGImageRef inImage, NSString * outFile){
         }
 
     }
-    
-    //If we don't clear it before reuse and the next image has transparencies we will wind up with the old image showing behind the new image.
-    CGContextClearRect(cgctx, rect);
     
     if (debugOutput)
         NSLog(@"CGContextRelease(cgctx);");
