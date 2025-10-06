@@ -22,6 +22,7 @@
 //Global variables? In my christian minecraft server?
 uint       outImageHeight    = 240;
 uint       outImageWidth     = 240;
+bool       makeRgb565        = YES;
 bool       makePPMPreview    = NO;
 bool       shouldInterpolate = NO;
 bool       shouldNegative    = NO;    //Make negative of image for funzies
@@ -221,7 +222,7 @@ void manipulateImagePixelData(CGImageRef inImage, NSString * outFile){
         if (makePPMPreview) {
           ppmData    = malloc(maxX * maxY * 3 * sizeof(unsigned char));
         }
-        if(1){ //currently the main purpose of the program but we might add other types.
+        if(makeRgb565){ //currently the main purpose of the program but we might add other types.
           rgb565Data = malloc(maxX * maxY * 2 * sizeof(unsigned char));
         }
         if (debugOutput)
@@ -250,7 +251,7 @@ void manipulateImagePixelData(CGImageRef inImage, NSString * outFile){
             writeOutFileToBinaryPPM(ppmData, outFile, maxX, maxY, maxX*maxY*3);
         }
         
-        if(1){  //make 565 currently the only purpose therefore, always done.
+        if(makeRgb565){
             for (int yPos = 0; yPos < maxY; ++yPos){
                 for (int xPos = 0; xPos < maxX; ++xPos){
                     unsigned char r = ((unsigned char*)data)[((yPos*maxX)+(xPos))*4+1];
@@ -286,7 +287,7 @@ void manipulateImagePixelData(CGImageRef inImage, NSString * outFile){
             ppmData = NULL;
         }
         
-        if (1 && rgb565Data){
+        if (makeRgb565 && rgb565Data){
             free(rgb565Data);
             rgb565Data = NULL;
         }
