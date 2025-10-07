@@ -44,7 +44,21 @@ class DropView: NSView {
                 // Handle the dropped file, e.g., move or copy it
                 print("path \(url.path)")
             }
-            fileUrlObtained!(fileURLs)
+            //fileUrlObtained!(fileURLs)
+            if let unwrappedFileUrlObtained = fileUrlObtained{
+                unwrappedFileUrlObtained(fileURLs)
+            }
+            else {
+                let alert = NSAlert()
+                alert.messageText = "Callback function not set"
+                alert.informativeText = "The callback function for handlng dropped urls has not been properly set. Try restarting the program. Please inform program author."
+                alert.alertStyle = .informational
+                alert.addButton(withTitle: "OK")
+                alert.runModal()
+                return false
+            }
+            
+            
             return true
         }
         return false
