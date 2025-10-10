@@ -12,6 +12,8 @@ class DropView: NSView {
 
     public var fileUrlObtained: (([URL]) -> Void)?
     
+    var helpLabel : NSTextField!
+    
     override init(frame rect: NSRect){
         super.init(frame: rect)
         
@@ -25,7 +27,18 @@ class DropView: NSView {
     override func awakeFromNib() {
         super.awakeFromNib()
         registerForDraggedTypes([.fileURL]) // Register for file URLs as drop types
+        
         NSLog("awake from nib")
+        
+        //In lieu of a help document display instructive label
+        helpLabel = NSTextField(labelWithString: "Drag and drop images here\nto convert. Or, use File>Open")
+        helpLabel.frame = NSRect(x: self.bounds.midX, y:self.bounds.midY, width: 200, height: 40)
+        self.addSubview(helpLabel)
+        
+        // So we can still resize the window
+        helpLabel.translatesAutoresizingMaskIntoConstraints = false
+        // Set constraints equal to top right
+        NSLayoutConstraint.activate([helpLabel.topAnchor.constraint(equalTo: self.topAnchor, constant: 80), helpLabel.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -70)])
     }
 
     // NSDraggingDestination
@@ -44,7 +57,7 @@ class DropView: NSView {
                 // Handle the dropped file, e.g., move or copy it
                 print("path \(url.path)")
             }
-            //fileUrlObtained!(fileURLs)
+            
             if let unwrappedFileUrlObtained = fileUrlObtained{
                 unwrappedFileUrlObtained(fileURLs)
             }
@@ -57,8 +70,6 @@ class DropView: NSView {
                 alert.runModal()
                 return false
             }
-            
-            
             return true
         }
         return false

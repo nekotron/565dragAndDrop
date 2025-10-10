@@ -317,6 +317,18 @@ CGImageRef getImageRefFromFile(NSString * filename){
     
     //NSString * filenameNSstr = [NSString stringWithString:filename];
     //[NSString stringWithCString:filename encoding:NSUTF8StringEncoding];
+  
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    BOOL isDirectory = NO;
+    
+    //Check and see if file is really a directory. Directories cause a crash when trying to compare magic numbers since there is nothing to compare magic numbers to.
+    if ([fileManager fileExistsAtPath:filename isDirectory:&isDirectory]) {
+        if (isDirectory) {
+            NSLog(@"It's a directory. Returning nil");
+            return nil;
+        }
+    }
+    
     NSURL * filenameNSurl = [NSURL fileURLWithPath:filename];
     NSLog(@"%@", filenameNSurl);
     NSError * error = nil;
@@ -606,7 +618,7 @@ int parseOption(const char* argv[], int optionToParse) {
                 manipulateImagePixelData(inImage, saveLocationMinusExtension);
             }
             else {
-                NSLog(@"UH OH AN ERROR HAVE STARTED TO MOVE.");
+                NSLog(@"UH OH AN ERROR HAVE STARTED TO MOVE. Failed to retreive/initialize CGImageRef.");
             }
    
         }
@@ -615,10 +627,6 @@ int parseOption(const char* argv[], int optionToParse) {
                 // */
     }
     return 0;
-}
-
-- (void) doSomething{
-    
 }
 
 @end

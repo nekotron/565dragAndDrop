@@ -19,7 +19,7 @@ class ViewController: NSViewController {
     
     
     var imgConverter = ImageConvert()
-    let myDropView = DropView(frame: NSRect(x: 0, y: 0, width: 500, height: 300))
+    var myDropView: DropView!
     var files = [NSURL]()
     
 
@@ -30,9 +30,17 @@ class ViewController: NSViewController {
         // Do any additional setup after loading the view.
     
         NotificationCenter.default.addObserver(self, selector: #selector(openFileDialog), name: Notification.Name("OpenClicked"), object: nil)
-        
+        myDropView = DropView(frame: NSRect(x: 0, y: 0, width: self.view.bounds.maxX, height: self.view.bounds.maxY))
         myDropView.fileUrlObtained = self.filesDropped
         self.view.addSubview(myDropView)
+        
+         
+        // Necessary when using Auto Layout programmatically
+        myDropView.translatesAutoresizingMaskIntoConstraints = false
+          
+        // Set the constraints to take up the whole window so dropping the file anywhere will always work no matter how the window is resized
+        NSLayoutConstraint.activate([myDropView.topAnchor.constraint(equalTo: self.view.topAnchor), myDropView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor), myDropView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor), myDropView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor)])
+        
     }
 
     //We have to call this to change the window.title
