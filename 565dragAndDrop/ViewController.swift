@@ -90,7 +90,7 @@ class ViewController: NSViewController {
     }
     */
     
-    //function that will be called from function "pointer" in DropView that will handle the fileUrls for processing.
+    ///function that will be called from function "pointer" in DropView that will handle the fileUrls for processing.
     func filesDropped(fileUrls: [URL]){
         let hght = heightTextField.intValue
         var drct = directoryTextField.stringValue

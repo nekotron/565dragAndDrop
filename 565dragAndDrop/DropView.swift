@@ -24,6 +24,7 @@ class DropView: NSView {
         super.init(coder: coderIn)
     }
     
+    ///set up view here
     override func awakeFromNib() {
         super.awakeFromNib()
         registerForDraggedTypes([.fileURL]) // Register for file URLs as drop types
@@ -43,6 +44,7 @@ class DropView: NSView {
 
     // NSDraggingDestination
 
+    ///A file has been dragged above the window
     override func draggingEntered(_ sender: NSDraggingInfo) -> NSDragOperation {
         // Determine if the dragged items are acceptable
         if sender.draggingPasteboard.canReadObject(forClasses: [NSURL.self], options: nil) {
@@ -51,6 +53,7 @@ class DropView: NSView {
         return []
     }
 
+    ///files have been dropped onto the dropView
     override func performDragOperation(_ sender: NSDraggingInfo) -> Bool {
         if let fileURLs = sender.draggingPasteboard.readObjects(forClasses: [NSURL.self], options: nil) as? [URL] {
             for url in fileURLs {
