@@ -1,5 +1,0 @@
-This is a macos application which takes input either through the file menu or dragging and dropping onto the window and returns an rgb 565 format.
-
-It currently doesn't accept gif formats.
-
-It was originally a macos 11 program which has left the checkboxes unclickable in macos 26 and likely before then too.
